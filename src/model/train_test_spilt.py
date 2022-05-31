@@ -13,7 +13,7 @@ def stratified_spilt(
         test_size: float,
         val_size: float,
         is_numerical: bool
-) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
+):
     """
     This functions breaks the dataset into train test and validation based on
     the stra_col and the test and val sizes
