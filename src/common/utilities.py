@@ -10,5 +10,8 @@ def load_data(path: str) -> pd.DataFrame:
     :param path: path of the data file
     :return: dataframe of the data file
     """
+    # test commit
     data = pd.read_csv(path)
     return data
+
+
