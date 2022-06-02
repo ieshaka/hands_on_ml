@@ -4,10 +4,11 @@ this is the main pipeline of the code
 from common import utilities as ut
 from model import train_test_spilt
 import numpy as np
-
+from model.transformations import CombinedAttributesAdder
+import pandas as pd
 
 def main():
-    housing_data = ut.load_data(r'../Data/housing/housing.csv')
+    housing_data = ut.load_data(r'./Data/housing/housing.csv')
     print(housing_data.shape)
     train_data, val_data, test_data = train_test_spilt.stratified_spilt(
         housing_data,
@@ -18,7 +19,13 @@ def main():
         0.1,
         True
     )
-    print(test_data.shape)
+    
+    housing = pd.concat([train_data,val_data])  
+    attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
+    housing_extra_attribs = attr_adder.transform(housing.values)
+
+    print(housing_extra_attribs.shape)
+
 
 
 if __name__ == '__main__':
