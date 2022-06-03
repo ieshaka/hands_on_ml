@@ -6,6 +6,12 @@ from model import train_test_spilt
 import numpy as np
 from model.transformations import CombinedAttributesAdder
 import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
+
 
 def main():
     housing_data = ut.load_data(r'./Data/housing/housing.csv')
@@ -21,10 +27,31 @@ def main():
     )
     
     housing = pd.concat([train_data,val_data])  
-    attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
-    housing_extra_attribs = attr_adder.transform(housing.values)
 
-    print(housing_extra_attribs.shape)
+    l_cols_numeric = ['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'total_bedrooms', 'population', 'households', 'median_income',
+       'median_house_value']
+
+    l_cols_categorical = ['ocean_proximity']
+
+    num_pipeline = Pipeline(
+        [
+            ('imputer', SimpleImputer(strategy="median")),
+            ('attrib_adder', CombinedAttributesAdder()),
+            ('std_scaler', StandardScaler())
+        ]
+    )
+
+    full_pipeline = ColumnTransformer(
+        [
+            ('num', num_pipeline, l_cols_numeric),
+            ('cat', OneHotEncoder(), l_cols_categorical)
+        ]
+    )
+
+    housing_prepared = full_pipeline.fit_transform(housing)
+
+    print(housing_prepared.shape)
 
 
 
